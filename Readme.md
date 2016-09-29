@@ -2,7 +2,7 @@ Phase unwrapping with multiple ambiguities and experimental noise.
 
 The problem:
 
-Data is phase of a travelling collected using a laser interferometer at discreet points along a membrane. The raw data is between 0 and -360 degrees and needs to be unwrapped to calculate with overall phase lag (to be used to calculate the velocity of the travelling wave). There is also a random 180 degree phase ambiguity that needs to be corrected and experimental noise.
+Data is phase of a travelling wave collected using a laser interferometer at discreet points along a membrane. The magnitude of the  raw data is between 0 and -360 degrees and needs to be unwrapped to calculate with overall phase lag (to be used to calculate the velocity of the travelling wave). There is also a random 180 degree phase ambiguity that needs to be corrected and experimental noise.
 
 In isolation both the 360 and 180 phase steps are simple to correct: 
 Jumps greater than |180| between adjacent points should be corrected by |360| in the opposite direction. 
