@@ -1,8 +1,11 @@
 %% Examples using unwrap3 and noise simulation
 clear
 close all
+rng(123)
+
+
 %% The data
-% What the data looks like
+% What the data looks like...
 
 % This is what we're assuming clean data roughly looks like
 % (oversimiplified a bit)
@@ -55,6 +58,8 @@ xlabel('Distance')
 ylabel('Phase, deg.')
 axis([0, 20, -500, 200])
 title('Wrapped data + 90^o ambuiguity + noise')
+
+
 %% Real data
 % Example of some real data
 
@@ -84,9 +89,11 @@ axis([0, 20, -500, 200])
 xlabel('Distance')
 ylabel('Phase, deg.')
 title('Real phase data (pd)')
+
+
 %% The problem
-% Find the real phase trajectory of pd (or restore the known, original phase 
-% trajecotry of fake data in y)
+% Find the real phase trajectory of pd (or restore the known, original
+% phase trajecotry of fake data in y)
 
 close all
 figure; hold on
@@ -96,15 +103,18 @@ axis([0, 20, -500, 200])
 xlabel('Distance')
 ylabel('Phase, deg.')
 legend('y', 'pd')
+
+
 %% Single, simple unwraps
-% Unwrap 360 and 180 degreee ambuiguties in seperate steps params.upThresh and 
-% params.downThresh are the up and down thresholds for correction (the difference 
-% between point n and n-1). downThresh is triggered if the next point goes down 
-% buy more than this value, and the next point will be corrected UP by downCor. 
-% Because phase is rolling off, the downThresh should be greater than the upThresh. 
-% Eg. If phase rolls off -20 deg between each point, upThresh should be 180+-20 
-% = 160 and downThresh should be -180+-20 = -200 Unwrap 3 also normalises the 
-% first few points to roughly 0
+% Unwrap 360 and 180 degreee ambuiguties in seperate steps params.upThresh
+% and params.downThresh are the up and down thresholds for correction (the
+% difference between point n and n-1). downThresh is triggered if the next
+% point goes down buy more than this value, and the next point will be
+% corrected UP by downCor. Because phase is rolling off, the downThresh
+% should be greater than the upThresh. Eg. If phase rolls off -20 deg
+% between each point, upThresh should be 180+-20 = 160 and downThresh
+% should be -180+-20 = -200 Unwrap 3 also normalises the first few points
+% to roughly 0
 
 close all
 roPhase = -25;
@@ -160,21 +170,24 @@ plot(2:numel(x), diff(pdU2)/(max(pdU2)-min(pdU2))*100, 'r')
 ylabel('Diff')
 xlabel('Distance')
 axis([0, 20, -100, 100])
+
+
 %% Experimental noise
-% At this point if the unwrap is known to be correct, we can calucalte the experimental 
-% noise at each point. For y, even if we pretend we don't know the rate of roll 
-% off, we can caluclate the noise at each point as each point is
+% At this point if the unwrap is known to be correct, we can calucalte the
+% experimental noise at each point. For y, even if we pretend we don't know
+% the rate of roll off, we can caluclate the noise at each point as each
+% point is However, for pd, we don't know if we've missed unwrap steps, or
+% where. One possible approach to dealing with this is to simulate the
+% noise at each point and see what the resulting unwraps look like. We can
+% assume, that with enough simulations, one will coincidenally exactly
+% cancel the experimental noise at each point - but how to know which one?
 
 disp(diff(pdU2)/(max(pdU2)-min(pdU2))*100 - 0)
 
-% However, for pd, we don't know if we've missed unwrap steps, or where.
-% One possible approach to dealing with this is to simulate the noise at
-% each point and see what the resulting unwraps look like. We can assume,
-% that with enough simulations, one will coincidenally exactly cancel the
-% experimental noise at each point - but how to know which one?
+
 %% Add noise (before unwrapping) and unwrap again
-% Run for both pd and y - if this works we should be able to recover y and compare 
-% it to the known original
+% Run for both pd and y - if this works we should be able to recover y and
+% compare it to the known original
 
 % Assumed real phase roll off
 close all
@@ -185,7 +198,7 @@ its = 1000;
 
 % Noise parameters
 mu = 0;
-sig = 20; % ?
+sig = 15; % ?
 
 % Output matrix (it x pos)
 nPos = numel(x);
@@ -216,8 +229,8 @@ for it = 1:its
 end
 
 h(1) = figure;
-subplot(1,4,1:3); hold on
-plot(yUWs')
+sp = subplot(1,4,1:3); hold on
+p = plot(yUWs');
 xlabel('Distance')
 ylabel('Phae, deg.')
 title('y')
@@ -225,12 +238,13 @@ subplot(1,4,4)
 histogram(yUWs(:,end),100)
 a = gca;
 a.View = [90 -90];
+a.XLim = sp.YLim;
 a.XTickLabel = [];
 ylabel('Count')
 
 h(2) = figure;
-subplot(1,4,1:3); hold on
-plot(pdUWs')
+sp = subplot(1,4,1:3); hold on
+plot(pdUWs');
 xlabel('Distance')
 ylabel('Phae, deg.')
 title('pd')
@@ -238,12 +252,15 @@ subplot(1,4,4)
 histogram(pdUWs(:,end),100)
 a = gca;
 a.View = [90 -90];
+a.XLim = sp.YLim;
 a.XTickLabel = [];
 ylabel('Count')
+
+
 %% Select best path
-% So there a quite a few possible phase trajectories, not normally distributed 
-% overall but perhaps normally distributed within possible groups. But which is 
-% the correct trajectory?
+% So there a quite a few possible phase trajectories, not normally
+% distributed overall but perhaps normally distributed within possible
+% groups. But which is the correct trajectory?
 
 % Minimise sum of jumps? - Smoothest path
 % Get differences between each position
